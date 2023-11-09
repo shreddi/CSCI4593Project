@@ -1,0 +1,173 @@
+/**
+ * Codasip s.r.o.
+ *
+ * CONFIDENTIAL
+ *
+ * Copyright 2022 Codasip s.r.o.
+ *
+ * All Rights Reserved.
+ *
+ * NOTICE: All information contained in this file, is and shall remain the property of
+ * Codasip s.r.o. and its suppliers, if any.
+ *
+ * The intellectual and technical concepts contained herein are confidential and proprietary to
+ * Codasip s.r.o. and are protected by trade secret and copyright law.  In addition, elements of the
+ * technical concepts may be patent pending.
+ *
+ * This file is part of the Codasip Studio product. No part of the Studio product, including this
+ * file, may be use, copied, modified, or distributed except in accordance with the terms contained
+ * in Codasip license agreement under which you obtained this file.
+ *
+ *  \file   ca_defines.hcodal
+ *  \author Codasip
+ *  \date   09.02.2022
+ *  \brief  cycle accurate model
+ */
+
+
+#ifndef CA_DEFINES_HCODAL
+#define CA_DEFINES_HCODAL
+
+#include "config.hcodal"
+
+// -------------------------------------------------------------------------------------------------
+// Signal size
+// -------------------------------------------------------------------------------------------------
+
+#define ALUOP_W                 bitsizeof(enum aluop)
+#define ALU_SRC1_SEL_W          bitsizeof(enum alu_src1_sel)
+#define ALU_SRC2_SEL_W          bitsizeof(enum alu_src2_sel)
+
+#define IMM_GEN_SEL_W           bitsizeof(enum imm_gen_mux)
+
+#define MEM_OPCODE_W            bitsizeof(enum mem_ops)
+
+#define RFF_W                   bitsizeof(enum rff_fwd)
+#define DHF_W                   bitsizeof(enum dhf_fwd)
+#define BRNCHOP_W               bitsizeof(enum brnchop)
+#define RFWTSEL_W               bitsizeof(enum rfwtsel)
+#define TARGET_ADDRESS_W        bitsizeof(enum target_address)
+
+// -------------------------------------------------------------------------------------------------
+// Defines
+// -------------------------------------------------------------------------------------------------
+#define DONT_CARE           0
+#define NOP_INSTRUCTION     0x00000013          // NOP equates to OPC_ADDI, addi x0, x0, 0
+
+#define IMM_12BIT               true
+#define IMM_20BIT               false
+// -------------------------------------------------------------------------------------------------
+// IF stage
+// -------------------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------
+// ID stage
+// -------------------------------------------------------------------------------------------------
+enum imm_gen_mux        // Select lines for generating the proper immediate to pass to the execute stage
+{
+    RTYPE_IMM_SEL,
+    ITYPE_IMM_SEL,
+    STYPE_IMM_SEL,
+    BTYPE_IMM_SEL,
+    UTYPE_IMM_SEL,
+    JTYPE_IMM_SEL
+};
+
+enum rff_fwd //to control the data forwarding in the decode (ID) stage
+{
+    RFF_REG,    //register file output
+    RFF_WB      //pipeline latch value
+};
+
+// -------------------------------------------------------------------------------------------------
+// EX stage
+// -------------------------------------------------------------------------------------------------
+
+// ALU function codes
+enum aluop
+{
+    ALU_NOP = 0,        // In enums, you can specify a particular value to an element.  All other
+    ALU_ADD,            // elements will have a value incremented by 1 unless assigned a specific value
+    ALU_SLTI,
+    ALU_SLTIU,
+    ALU_XORI,
+    ALU_ORI,
+    ALU_ANDI,
+    ALU_SUB,
+    ALU_SLL,
+    ALU_SRL,
+    ALU_SRA,
+};
+
+// ALU SRC1 operand mux select lines
+enum alu_src1_sel
+{
+    ALU_SRC1_SEL_RF,    // Set output to the register file
+    ALU_SRC1_SEL_ZERO,
+    ALU_SRC1_SEL_PC
+};
+
+// ALU SRC2 operand mux select lines
+enum alu_src2_sel
+{
+    ALU_SRC2_SEL_RF,    // Set output to the register file
+    ALU_SRC2_SEL_IMM,   // Set output to the immediate input value
+};
+
+// MEMORY opcodes
+enum mem_ops
+{
+    MEM_NOP,             // Not a memory operation
+    MEM_LB,
+    MEM_LBU,
+    MEM_LH,
+    MEM_LHU,
+    MEM_LW,
+    MEM_SB,
+    MEM_SH,
+    MEM_SW,
+};
+
+enum dhf_fwd //to control the data forwarding in the execute (EX) stage
+{
+    DHF_REG, //register file output
+    DHF_ME, //EX/MEM pipline latch value
+    DHF_WB //MEM/WB pipeline latch value
+};
+
+enum rfwtsel //for mux control signal r_ex_rfwtsel taht selects whether to write alu output or PC + 4 to the register file.
+{
+    WB_ALU, //Write the original ALU output to the destination register.
+    WB_PC //Write PC+4 to the destination register (for JAL and JALR)
+};
+
+enum target_address //for mux control signal r_idex_jump_inst. Determines whether branch target address is PC+imm (JAL) or calcluated from ALU result (JALR)
+{
+    BRADD_ADDR, //get branch target address from adding immediate to PC (for JAL and all branch instructions)
+    BRADD_ALU //get branch target address from output of alu (JALR)
+};
+
+
+// -------------------------------------------------------------------------------------------------
+// ME stage
+// -------------------------------------------------------------------------------------------------
+
+enum brnchop //for mux control signal s_id_branchop
+{
+    BRANCH_FALSE, //never branch (which must be the default and thus first in the list)
+    BRANCH_TRUE, //always branch
+    BRANCH_COND_TRUE, //branch if the ALU output is zero (for conditional branches)
+    BRANCH_COND_FALSE //branch if the ALU output is not zero (for conditional branches)
+};
+// -------------------------------------------------------------------------------------------------
+// WB stage
+// -------------------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------
+// Auxiliary definitions
+// -------------------------------------------------------------------------------------------------
+
+
+
+#endif // CA_DEFINES_HCODAL
+

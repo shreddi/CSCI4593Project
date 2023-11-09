@@ -1,0 +1,10 @@
+■ Result value while running the assembly program
+	16801■ Result value while running your c-program
+	16801■ Your comments for each of the programs that you recorded that includesan estimate of the time spent on each Checkpoint and how difficult it wasto write and debug	The time to implement this C program was about 10 minutes. It was easy to debug.
+	The assembly portion took me about an hour to implement. It was difficult to debug. 
+	Converting each assembly instruction to machine code took me about 45 minutes. I would imagine it would be very difficult to debug.■ Summarize your experience● c-program compared to assembly
+	It is a lot easier to code and debug in C than in assembly. I think this is by design, as in this was the point of C being made. For example, variable names are easier to keep track of than register names.● assembly to machine code
+	This was painstaking to have to check the specifications sheet for every operation and check each bit to make sure it was right. It was really interesting, though. It is cool to think that I was able to see	the list of 1's and 0's that my computer reads when running my program.● c-program to machine code
+	I see how assembly is a necessary intermediate step between C and machine code. Frankly, I feel like the gap between assembly and C is of less magnitude than the gap between assembly and machine code. 
+
+ 
